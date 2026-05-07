@@ -4,6 +4,8 @@ import activityModels from "./activity.models.js";
 import tagsModels from "./tags.models.js";
 import userModels from "./user.models.js";
 import followModels from "./follow.models.js";
+import badgesModels from "./badges.models.js";
+import userBadgesModels from "./user_badges.models.js";
 import listsModels from "./lists.models.js";
 import listsItemModels from "./lists_item.models.js";
 
@@ -17,6 +19,8 @@ const Activity = activityModels(sequelize, DataTypes);
 const Tag = tagsModels(sequelize, DataTypes);
 const User = userModels(sequelize, DataTypes);
 const Follow = followModels(sequelize, DataTypes);
+const Badge = badgesModels(sequelize, DataTypes);
+const UserBadge = userBadgesModels(sequelize, DataTypes);
 const List = listsModels(sequelize, DataTypes);
 const ListItem = listsItemModels(sequelize, DataTypes);
 
@@ -39,6 +43,29 @@ Tag.belongsToMany(Activity, {
   foreignKey: "tag_id",
   otherKey: "activity_id"
 });
+
+Badge.belongsTo(ODS, {
+  foreignKey: "ods_n"
+});
+ODS.hasMany(Badge, {
+  foreignKey: "ods_n"
+});
+
+User.belongsToMany(Badge, {
+  through: UserBadge,
+  foreignKey: "userId",
+  otherKey: "badgeId"
+});
+Badge.belongsToMany(User, {
+  through: UserBadge,
+  foreignKey: "badgeId",
+  otherKey: "userId"
+});
+
+User.hasMany(UserBadge, { foreignKey: "userId" });
+Badge.hasMany(UserBadge, { foreignKey: "badgeId" });
+UserBadge.belongsTo(User, { foreignKey: "userId" });
+UserBadge.belongsTo(Badge, { foreignKey: "badgeId" });
 
 User.belongsToMany(User, {
   as: "Following",
@@ -72,5 +99,37 @@ ListItem.belongsTo(List, { foreignKey: "listId" });
 Activity.hasMany(ListItem, { foreignKey: "activityId" });
 ListItem.belongsTo(Activity, { foreignKey: "activityId" });
 
-export { ODS, Activity, Tag, User, Follow, List, ListItem };
+async function completeActivityWithBadge(userId, activityId) {
+  const activity = await Activity.findByPk(activityId);
+  if (!activity) {
+    throw new Error("Activity not found");
+  }
+
+  if (!activity.isCompleted) {
+    activity.isCompleted = true;
+    await activity.save();
+  }
+
+  const badge = await Badge.findOne({ where: { ods_n: activity.ods_n } });
+  if (!badge) {
+    return { activity };
+  }
+
+  const [userBadge] = await UserBadge.findOrCreate({
+    where: {
+      userId,
+      badgeId: badge.id
+    },
+    defaults: {
+      count: 0
+    }
+  });
+
+  userBadge.count += 1;
+  await userBadge.save();
+
+  return { activity, badge, userBadge };
+}
+
+export { ODS, Activity, Tag, Badge, User, Follow, List, ListItem, UserBadge, completeActivityWithBadge };
 export default sequelize;
