@@ -1,5 +1,5 @@
 import express from "express";
-import odsController from "../controllers/ods.controller.js";
+import odsController from "../controllers/ods.controllers.js";
 
 const router = express.Router();
 
