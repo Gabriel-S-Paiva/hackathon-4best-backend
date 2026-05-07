@@ -12,7 +12,7 @@ export default (sequelize, DataTypes) => sequelize.define(
       references: {
         model: "ods",
         key: "n_ods"
-      },
+      }
     },
     title: {
       type: DataTypes.STRING,
@@ -21,6 +21,16 @@ export default (sequelize, DataTypes) => sequelize.define(
     description: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    isMarked: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    isCompleted: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   },
   {
