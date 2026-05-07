@@ -6,6 +6,8 @@ import userModels from "./user.models.js";
 import followModels from "./follow.models.js";
 import badgesModels from "./badges.models.js";
 import userBadgesModels from "./user_badges.models.js";
+import profModels from "./prof.models.js";
+import feedModels from "./feed.models.js";
 import listsModels from "./lists.models.js";
 import listsItemModels from "./lists_item.models.js";
 
@@ -21,6 +23,8 @@ const User = userModels(sequelize, DataTypes);
 const Follow = followModels(sequelize, DataTypes);
 const Badge = badgesModels(sequelize, DataTypes);
 const UserBadge = userBadgesModels(sequelize, DataTypes);
+const Prof = profModels(sequelize, DataTypes);
+const Feed = feedModels(sequelize, DataTypes);
 const List = listsModels(sequelize, DataTypes);
 const ListItem = listsItemModels(sequelize, DataTypes);
 
@@ -99,6 +103,20 @@ ListItem.belongsTo(List, { foreignKey: "listId" });
 Activity.hasMany(ListItem, { foreignKey: "activityId" });
 ListItem.belongsTo(Activity, { foreignKey: "activityId" });
 
+Prof.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(Prof, { foreignKey: "userId" });
+Prof.belongsTo(Activity, { foreignKey: "activityId" });
+Activity.hasMany(Prof, { foreignKey: "activityId" });
+Prof.belongsTo(ListItem, { foreignKey: "listItemId" });
+ListItem.hasMany(Prof, { foreignKey: "listItemId" });
+
+Feed.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(Feed, { foreignKey: "userId" });
+Feed.belongsTo(Prof, { foreignKey: "profId" });
+Prof.hasOne(Feed, { foreignKey: "profId" });
+Feed.belongsTo(Activity, { foreignKey: "activityId" });
+Activity.hasMany(Feed, { foreignKey: "activityId" });
+
 async function completeActivityWithBadge(userId, activityId) {
   const activity = await Activity.findByPk(activityId);
   if (!activity) {
@@ -131,5 +149,5 @@ async function completeActivityWithBadge(userId, activityId) {
   return { activity, badge, userBadge };
 }
 
-export { ODS, Activity, Tag, Badge, User, Follow, List, ListItem, UserBadge, completeActivityWithBadge };
+export { ODS, Activity, Tag, Badge, User, Follow, List, ListItem, UserBadge, Prof, Feed, completeActivityWithBadge };
 export default sequelize;
