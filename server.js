@@ -1,14 +1,14 @@
 import express from 'express';
 import sequelize from './models/db.config.js';
-import usersRouter from './routes/users.js';
-import activitiesRouter from './routes/activities.js';
-import listsRouter from './routes/lists.js';
-import communitiesRouter from './routes/communities.js';
-import badgesRouter from './routes/badges.js';
-import profsRouter from './routes/profs.js';
-import feedRouter from './routes/feed.js';
-import tagsRouter from './routes/tags.js';
-import odsRouter from './routes/ods.js';
+import usersRouter from './routes/users.routes.js';
+import activitiesRouter from './routes/activities.routes.js';
+import listsRouter from './routes/lists.routes.js';
+import communitiesRouter from './routes/communities.routes.js';
+import badgesRouter from './routes/badges.routes.js';
+import profsRouter from './routes/profs.routes.js';
+import feedRouter from './routes/feed.routes..js';
+import tagsRouter from './routes/tags.routes.js';
+import odsRouter from './routes/ods.routes.js';
 
 const app = express();
 const port = process.env.PORT ?? 3000;
