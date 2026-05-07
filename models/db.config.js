@@ -15,7 +15,7 @@ import listsItemModels from "./lists_item.models.js";
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
-  storage: "./database.sqlite"
+  storage: "./database/database.sqlite"
 });
 
 const ODS = odsModels(sequelize, DataTypes);
