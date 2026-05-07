@@ -6,7 +6,9 @@ import userModels from "./user.models.js";
 import followModels from "./follow.models.js";
 import badgesModels from "./badges.models.js";
 import userBadgesModels from "./user_badges.models.js";
-import profModels from "./prof.models.js";
+import comunityModels from "./community.models.js";
+import userCommunitiesModels from "./user_communities.models.js";
+import profModels from "./proof.models.js";
 import feedModels from "./feed.models.js";
 import listsModels from "./lists.models.js";
 import listsItemModels from "./lists_item.models.js";
@@ -23,6 +25,8 @@ const User = userModels(sequelize, DataTypes);
 const Follow = followModels(sequelize, DataTypes);
 const Badge = badgesModels(sequelize, DataTypes);
 const UserBadge = userBadgesModels(sequelize, DataTypes);
+const Community = comunityModels(sequelize, DataTypes);
+const UserCommunity = userCommunitiesModels(sequelize, DataTypes);
 const Prof = profModels(sequelize, DataTypes);
 const Feed = feedModels(sequelize, DataTypes);
 const List = listsModels(sequelize, DataTypes);
@@ -83,6 +87,22 @@ User.belongsToMany(User, {
   foreignKey: "followingId",
   otherKey: "followerId"
 });
+
+User.belongsToMany(Community, {
+  through: UserCommunity,
+  foreignKey: "userId",
+  otherKey: "communityId"
+});
+Community.belongsToMany(User, {
+  through: UserCommunity,
+  foreignKey: "communityId",
+  otherKey: "userId"
+});
+
+User.hasMany(UserCommunity, { foreignKey: "userId" });
+Community.hasMany(UserCommunity, { foreignKey: "communityId" });
+UserCommunity.belongsTo(User, { foreignKey: "userId" });
+UserCommunity.belongsTo(Community, { foreignKey: "communityId" });
 
 List.belongsTo(User, { foreignKey: "userId" });
 User.hasMany(List, { foreignKey: "userId" });
@@ -149,5 +169,5 @@ async function completeActivityWithBadge(userId, activityId) {
   return { activity, badge, userBadge };
 }
 
-export { ODS, Activity, Tag, Badge, User, Follow, List, ListItem, UserBadge, Prof, Feed, completeActivityWithBadge };
+export { ODS, Activity, Tag, Badge, User, Follow, Community, UserCommunity, List, ListItem, UserBadge, Prof, Feed, completeActivityWithBadge };
 export default sequelize;
