@@ -6,7 +6,7 @@ import listsRouter from './routes/lists.routes.js';
 import communitiesRouter from './routes/communities.routes.js';
 import badgesRouter from './routes/badges.routes.js';
 import profsRouter from './routes/profs.routes.js';
-import feedRouter from './routes/feed.routes..js';
+import feedRouter from './routes/feed.routes.js';
 import tagsRouter from './routes/tags.routes.js';
 import odsRouter from './routes/ods.routes.js';
 
